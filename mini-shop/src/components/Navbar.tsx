@@ -38,12 +38,19 @@ function Navbar() {
     const delayDebounceFn = setTimeout(() => {
       if (searchQuery.trim().length > 1) {
         fetch(`https://dummyjson.com/products/search?q=${searchQuery}`)
-          .then((res) => res.json())
+          .then((res) => {
+            if (!res.ok) throw new Error("Axtarış nəticələri gətirilə bilmədi.");
+            return res.json();
+          })
           .then((data) => {
             setSearchResults(data.products.slice(0, 5));
             setShowResults(true);
           })
-          .catch((err) => console.error("Axtarış xətası:", err));
+          .catch((err) => {
+            console.error("Axtarış xətası:", err.message);
+            setSearchResults([]);
+            setShowResults(false);
+          });
       } else {
         setSearchResults([]);
         setShowResults(false);

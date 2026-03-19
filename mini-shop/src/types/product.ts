@@ -1,4 +1,4 @@
-// types/product.ts faylı
+
 export interface Review {
   rating: number;
   comment: string;

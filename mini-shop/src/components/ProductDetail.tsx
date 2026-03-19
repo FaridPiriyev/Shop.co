@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import type { Product } from "../types/product";
 import { useCart } from "../components/CartContext";
-import { Heart } from "lucide-react";
+import {
+  Heart,
+  AlertCircle,
+  ArrowLeft,
+  SlidersHorizontal,
+  Check,
+} from "lucide-react";
 import { useWishlist } from "../components/WishlistContext";
 
 const ProductDetail = () => {
@@ -16,6 +22,8 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState("");
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toggleWishlist, isInWishlist } = useWishlist();
 
   const colors = [
@@ -43,37 +51,104 @@ const ProductDetail = () => {
     window.addEventListener("resize", handleResize);
     window.scrollTo(0, 0);
 
+    setLoading(true);
+    setError(null);
+
     fetch(`https://dummyjson.com/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.message) {
-          setProduct(data);
-          setMainImage(data.thumbnail);
-          fetch(
-            `https://dummyjson.com/products/category/${data.category}?limit=5`,
-          )
-            .then((res) => res.json())
-            .then((resData) => {
-              setRelatedProducts(
-                resData.products
-                  .filter((p: any) => p.id !== Number(id))
-                  .slice(0, 4),
-              );
-            });
-        }
+      .then((res) => {
+        if (!res.ok)
+          throw new Error("Məhsul tapılmadı və ya server xətası baş verdi.");
+        return res.json();
       })
-      .catch((err) => console.error("Data error:", err));
+      .then((data) => {
+        setProduct(data);
+        setMainImage(data.thumbnail);
+
+        return fetch(
+          `https://dummyjson.com/products/category/${data.category}?limit=5`,
+        );
+      })
+      .then((res) => res?.json())
+      .then((resData) => {
+        if (resData && resData.products) {
+          setRelatedProducts(
+            resData.products
+              .filter((p: any) => p.id !== Number(id))
+              .slice(0, 4),
+          );
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Data error:", err);
+        setError(err.message);
+        setLoading(false);
+      });
 
     return () => window.removeEventListener("resize", handleResize);
   }, [id]);
 
-  if (!product || !product.title) {
+  if (loading) {
     return (
-      <div style={{ textAlign: "center", padding: "100px", fontSize: "20px" }}>
-        Məhsul yüklənir...
+      <div
+        style={{
+          textAlign: "center",
+          padding: "150px 20px",
+          fontSize: "18px",
+          color: "rgba(0,0,0,0.5)",
+        }}
+      >
+        <div className="animate-pulse">Loading product information...</div>
       </div>
     );
   }
+
+  if (error) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "100px 20px",
+          textAlign: "center",
+        }}
+      >
+        <AlertCircle
+          size={64}
+          color="#FF3333"
+          style={{ marginBottom: "20px" }}
+        />
+        <h2
+          style={{ fontSize: "24px", fontWeight: "800", marginBottom: "10px" }}
+        >
+          AN ERROR OCCURRED
+        </h2>
+        <p style={{ color: "rgba(0,0,0,0.6)", marginBottom: "30px" }}>
+          {error}
+        </p>
+        <Link
+          to="/"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            backgroundColor: "black",
+            color: "white",
+            padding: "12px 25px",
+            borderRadius: "50px",
+            textDecoration: "none",
+            fontWeight: "600",
+          }}
+        >
+          <ArrowLeft size={20} /> Return to home page
+        </Link>
+      </div>
+    );
+  }
+
+  if (!product) return null;
 
   const isMobile = windowWidth < 850;
   const displayedRelatedProducts = isMobile
@@ -121,7 +196,7 @@ const ProductDetail = () => {
       borderRadius: "20px",
       padding: "20px",
       marginBottom: "15px",
-      overflow: "hidden", 
+      overflow: "hidden",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -136,6 +211,14 @@ const ProductDetail = () => {
         transition: "transform 0.4s ease",
         transform: isHovered ? "scale(1.15)" : "scale(1)",
       }) as React.CSSProperties,
+
+    reviewCard: {
+      border: "1px solid #E6E6E6",
+      borderRadius: "20px",
+      padding: "28px",
+      textAlign: "left",
+      position: "relative",
+    } as React.CSSProperties,
   };
 
   return (
@@ -419,6 +502,193 @@ const ProductDetail = () => {
               />
             </button>
           </div>
+        </div>
+      </div>
+
+      <div style={{ marginTop: "50px" }}>
+        <div
+          style={{
+            display: "flex",
+            borderBottom: "1px solid #eee",
+            marginBottom: "30px",
+          }}
+        >
+          <div
+            style={{
+              padding: "15px 30px",
+              color: "rgba(0,0,0,0.5)",
+              fontWeight: "500",
+              cursor: "pointer",
+            }}
+          >
+            Product Details
+          </div>
+          <div
+            style={{
+              padding: "15px 30px",
+              color: "black",
+              fontWeight: "600",
+              borderBottom: "2px solid black",
+              cursor: "pointer",
+            }}
+          >
+            Rating & Reviews
+          </div>
+          <div
+            style={{
+              padding: "15px 30px",
+              color: "rgba(0,0,0,0.5)",
+              fontWeight: "500",
+              cursor: "pointer",
+            }}
+          >
+            FAQs
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "25px",
+          }}
+        >
+          <h2 style={{ fontSize: "24px", fontWeight: "700" }}>
+            All Reviews{" "}
+            <span
+              style={{
+                fontSize: "14px",
+                color: "rgba(0,0,0,0.5)",
+                fontWeight: "400",
+              }}
+            >
+              ({product.reviews?.length || 0})
+            </span>
+          </h2>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
+              style={{
+                backgroundColor: "#F0F0F0",
+                border: "none",
+                padding: "10px 15px",
+                borderRadius: "50px",
+                cursor: "pointer",
+              }}
+            >
+              <SlidersHorizontal size={20} />
+            </button>
+            <button
+              style={{
+                backgroundColor: "black",
+                color: "white",
+                border: "none",
+                padding: "12px 25px",
+                borderRadius: "50px",
+                fontWeight: "600",
+                cursor: "pointer",
+              }}
+            >
+              Write a Review
+            </button>
+          </div>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+            gap: "20px",
+            marginBottom: "40px",
+          }}
+        >
+          {product.reviews?.map((review: any, index: number) => (
+            <div key={index} style={s.reviewCard}>
+              <div
+                style={{
+                  color: "#FFC633",
+                  marginBottom: "12px",
+                  fontSize: "18px",
+                }}
+              >
+                {"★".repeat(review.rating)}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  marginBottom: "12px",
+                }}
+              >
+                <span style={{ fontWeight: "700", fontSize: "20px" }}>
+                  {review.reviewerName}
+                </span>
+                <div
+                  style={{
+                    backgroundColor: "#01AB31",
+                    borderRadius: "50%",
+                    width: "18px",
+                    height: "18px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Check size={12} color="white" strokeWidth={4} />
+                </div>
+              </div>
+              <p
+                style={{
+                  color: "rgba(0,0,0,0.6)",
+                  lineHeight: "1.6",
+                  marginBottom: "20px",
+                  fontSize: "15px",
+                }}
+              >
+                "{review.comment}"
+              </p>
+              <div
+                style={{
+                  color: "rgba(0,0,0,0.6)",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                }}
+              >
+                Posted on{" "}
+                {new Date(review.date).toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </div>
+              <div
+                style={{
+                  position: "absolute",
+                  top: "28px",
+                  right: "28px",
+                  color: "rgba(0,0,0,0.4)",
+                }}
+              >
+                <SlidersHorizontal size={24} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ textAlign: "center", marginBottom: "80px" }}>
+          <button
+            style={{
+              backgroundColor: "white",
+              border: "1px solid #eee",
+              padding: "15px 40px",
+              borderRadius: "50px",
+              fontWeight: "600",
+              cursor: "pointer",
+            }}
+          >
+            Load More Reviews
+          </button>
         </div>
       </div>
 

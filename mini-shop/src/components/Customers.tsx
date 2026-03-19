@@ -1,5 +1,4 @@
 import React from "react";
-
 import { useNavigate } from "react-router-dom";
 
 const BrowseByStyle = () => {
@@ -8,17 +7,21 @@ const BrowseByStyle = () => {
   const styles = [
     {
       title: "Casual",
-      slug: "mens-shirts",
+      slug: "mens-shirts", 
       img: "/category1.png",
       className: "md:col-span-4",
       position: "left center",
+      flip: true,
+      zoom: 1.8,
     },
     {
       title: "Formal",
-      slug: "mens-shoes",
+      slug: "mens-watches", 
       img: "/category2.png",
       className: "md:col-span-8",
       position: "right center",
+      flip: true,
+      zoom: 1,
     },
     {
       title: "Party",
@@ -26,16 +29,19 @@ const BrowseByStyle = () => {
       img: "/category3.png",
       className: "md:col-span-8",
       position: "center",
+      flip: false,
+      zoom: 1,
     },
     {
       title: "Gym",
-      slug: "sports-accessories",
+      slug: "sports-accessories", 
       img: "/category4.png",
       className: "md:col-span-4",
       position: "center",
+      flip: false,
+      zoom: 1,
     },
   ];
-
   return (
     <section className="max-w-[1240px] mx-auto px-4 py-10">
       <div className="bg-[#F0F0F0] rounded-[40px] p-6 md:p-16">
@@ -59,7 +65,7 @@ const BrowseByStyle = () => {
                 alt={style.title}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.1]"
                 style={{
-                  transform: "scale(1.1)",
+                  transform: `${style.flip ? "scaleX(-1)" : "scaleX(1)"} scale(${style.zoom})`,
                   objectPosition: style.position,
                 }}
               />

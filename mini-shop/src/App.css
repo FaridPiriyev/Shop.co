@@ -1,3 +1,10 @@
+body {
+  background-color: black;
+  margin: 0;
+}
+
+
+
 .products-container {
   max-width: 1240px;
   margin: 0 auto;
