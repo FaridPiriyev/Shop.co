@@ -211,7 +211,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
           <div className="col-span-1 md:col-span-2">
-            <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6">
+            <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6 font-['Satoshi']">
               Company
             </h3>
             <ul className="flex flex-col gap-4 text-black/60 text-sm md:text-base">
@@ -226,7 +226,7 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="col-span-1 md:col-span-2">
-            <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6">
+            <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6 font-['Satoshi']">
               Help
             </h3>
             <ul className="flex flex-col gap-4 text-black/60 text-sm md:text-base">
@@ -246,7 +246,7 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="col-span-1 md:col-span-2">
-            <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6">
+            <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6 font-['Satoshi']">
               FAQ
             </h3>
             <ul className="flex flex-col gap-4 text-black/60 text-sm md:text-base">
@@ -263,7 +263,7 @@ const Footer: React.FC = () => {
           </div>
 
           <div className="col-span-1 md:col-span-2">
-            <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6">
+            <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6 font-['Satoshi']">
               Resources
             </h3>
             <ul className="flex flex-col gap-4 text-black/60 text-sm md:text-base">

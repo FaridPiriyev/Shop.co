@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Product } from "../types/product";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const navigate = useNavigate();
+  const [isHovered, setIsHovered] = useState(false);
 
   const hasDiscount = product.discountPercentage > 10;
   const originalPrice = (
@@ -32,6 +34,8 @@ const ProductCard = ({ product }: { product: Product }) => {
       width: "100%",
       height: "auto",
       mixBlendMode: "multiply" as any,
+      transition: "transform 0.4s ease",
+      transform: isHovered ? "scale(1.1)" : "scale(1)",
     } as React.CSSProperties,
     title: {
       fontSize: "18px",
@@ -47,7 +51,8 @@ const ProductCard = ({ product }: { product: Product }) => {
     } as React.CSSProperties,
     stars: {
       color: "#FFC633",
-      fontSize: "18px",
+      fontSize: "22px",
+      letterSpacing: "2px",
     } as React.CSSProperties,
     ratingText: {
       color: "rgba(0,0,0,0.6)",
@@ -76,7 +81,12 @@ const ProductCard = ({ product }: { product: Product }) => {
   };
 
   return (
-    <div style={styles.card} onClick={() => navigate(`/product/${product.id}`)}>
+    <div
+      style={styles.card}
+      onClick={() => navigate(`/product/${product.id}`)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div style={styles.imageWrapper}>
         <img src={product.thumbnail} alt={product.title} style={styles.image} />
       </div>

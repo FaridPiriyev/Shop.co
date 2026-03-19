@@ -1,5 +1,5 @@
 import { useCart } from "../components/CartContext";
-import { Trash2, Plus, Minus, ArrowRight, Tag } from "lucide-react";
+import { Trash, Plus, Minus, ArrowRight, Tag } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const CartPage = () => {
@@ -9,7 +9,8 @@ const CartPage = () => {
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
-  const discount = subtotal * 0.2; 
+
+  const discount = subtotal * 0.2;
   const deliveryFee = subtotal > 0 ? 15 : 0;
   const total = subtotal - discount + deliveryFee;
 
@@ -20,7 +21,7 @@ const CartPage = () => {
           YOUR CART IS EMPTY
         </h1>
         <p className="text-gray-500 mb-8">
-          Səbətinizdə hazırda heç bir məhsul yoxdur.
+          There are currently no products in your cart.
         </p>
         <Link
           to="/"
@@ -43,7 +44,7 @@ const CartPage = () => {
         <div className="flex-[1.5] border border-gray-200 rounded-[20px] p-4 lg:p-6 h-fit">
           {cartItems.map((item) => (
             <div
-              key={`${item.id}-${item.size}`}
+              key={`${item.id}-${item.size}-${item.color}`}
               className="flex gap-4 py-6 border-b border-gray-200 last:border-0 last:pb-0 first:pt-0"
             >
               <img
@@ -58,29 +59,39 @@ const CartPage = () => {
                     <p className="text-sm mt-1">
                       Size:{" "}
                       <span className="text-gray-500">
-                        {item.size || "Large"}
+                        {item.size || "Standard"}
                       </span>
                     </p>
                     <p className="text-sm mt-1">
                       Color:{" "}
                       <span className="text-gray-500">
-                        {item.color || "White"}
+                        {item.color || "Default"}
                       </span>
                     </p>
                   </div>
                   <button
-                    onClick={() => removeFromCart(item.id)}
-                    className="text-[#FF3333]"
+                    onClick={() =>
+                      removeFromCart(item.id, item.size, item.color)
+                    }
+                    className="text-[#FF3333] hover:opacity-75 transition-opacity"
                   >
-                    <Trash2 fill="#FF3333" stroke="#FF3333" size={24} />
+                    <Trash fill="#FF3333" stroke="#FF3333" size={24} />
                   </button>
                 </div>
+
                 <div className="flex justify-between items-center mt-4">
                   <span className="text-2xl font-bold">${item.price}</span>
                   <div className="flex items-center justify-between w-[120px] bg-[#F0F0F0] px-4 py-2.5 rounded-full">
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="text-xl"
+                      onClick={() =>
+                        updateQuantity(
+                          item.id,
+                          item.size,
+                          item.color,
+                          item.quantity - 1,
+                        )
+                      }
+                      className="text-xl hover:text-gray-600"
                     >
                       <Minus size={20} />
                     </button>
@@ -88,8 +99,15 @@ const CartPage = () => {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="text-xl"
+                      onClick={() =>
+                        updateQuantity(
+                          item.id,
+                          item.size,
+                          item.color,
+                          item.quantity + 1,
+                        )
+                      }
+                      className="text-xl hover:text-gray-600"
                     >
                       <Plus size={20} />
                     </button>

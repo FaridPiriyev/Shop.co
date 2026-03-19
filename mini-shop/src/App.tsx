@@ -8,36 +8,40 @@ import Slider from "./components/Slider";
 import CategoryPage from "./components/CategoryPage";
 import Footer from "./components/Footer";
 import { CartProvider } from "./components/CartContext";
+import { WishlistProvider } from "./components/WishlistContext"; 
 import CartPage from "./components/Cart";
+import Wishlist from "./components/Wishlist"; 
 
 function App() {
   return (
-    <CartProvider>
-      <div>
-        <Navbar />
+    <WishlistProvider>
+      {" "}
+      <CartProvider>
+        <div>
+          <Navbar />
 
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Home />
-                <Products />
-                <Customers />
-                <Slider/>
-              </>
-            }
-          />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <Home />
+                  <Products />
+                  <Customers />
+                  <Slider />
+                </>
+              }
+            />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/category/:categoryName" element={<CategoryPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/wishlist" element={<Wishlist />} />{" "}
+          </Routes>
 
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/category/:categoryName" element={<CategoryPage />} />
-
-          <Route path="/cart" element={<CartPage />} />
-        </Routes>
-
-        <Footer />
-      </div>
-    </CartProvider>
+          <Footer />
+        </div>
+      </CartProvider>
+    </WishlistProvider>
   );
 }
 

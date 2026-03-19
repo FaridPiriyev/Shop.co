@@ -1,15 +1,28 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import type { Product } from "../types/product";
 import { useCart } from "../components/CartContext";
+import { Heart } from "lucide-react";
+import { useWishlist } from "../components/WishlistContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [selectedSize, setSelectedSize] = useState("Large");
+  const [selectedColor, setSelectedColor] = useState("Olive");
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [quantity, setQuantity] = useState(1);
+  const [mainImage, setMainImage] = useState("");
+  const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
+  const colors = [
+    { label: "Olive", hex: "#4F4631" },
+    { label: "Teal", hex: "#314F4A" },
+    { label: "Navy", hex: "#31344F" },
+  ];
 
   const handleAddToCart = () => {
     if (product) {
@@ -20,32 +33,40 @@ const ProductDetail = () => {
         image: product.thumbnail,
         quantity: quantity,
         size: selectedSize,
-        color: "Black",
+        color: selectedColor,
       });
-      alert(`${product.title} səbətə əlavə edildi!`);
     }
   };
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
+    window.scrollTo(0, 0);
 
     fetch(`https://dummyjson.com/products/${id}`)
       .then((res) => res.json())
       .then((data) => {
-        // Əgər API-dan xəta mesajı gəlsə (məsələn product tapılmasa) setProduct-u null saxla
-        if (data.message) {
-          console.error("Məhsul tapılmadı:", data.message);
-        } else {
+        if (!data.message) {
           setProduct(data);
+          setMainImage(data.thumbnail);
+          fetch(
+            `https://dummyjson.com/products/category/${data.category}?limit=5`,
+          )
+            .then((res) => res.json())
+            .then((resData) => {
+              setRelatedProducts(
+                resData.products
+                  .filter((p: any) => p.id !== Number(id))
+                  .slice(0, 4),
+              );
+            });
         }
       })
-      .catch((err) => console.error("Data gətirilərkən xəta:", err));
+      .catch((err) => console.error("Data error:", err));
 
     return () => window.removeEventListener("resize", handleResize);
   }, [id]);
 
-  // Əgər product yoxdursa və ya daxilində başlıq hələ yoxdursa yükləmə ekranı göstər
   if (!product || !product.title) {
     return (
       <div style={{ textAlign: "center", padding: "100px", fontSize: "20px" }}>
@@ -55,8 +76,9 @@ const ProductDetail = () => {
   }
 
   const isMobile = windowWidth < 850;
-
-  // Endirimli qiymət hesablama (Ehtiyat üçün 0-a bölünməni yoxlayırıq)
+  const displayedRelatedProducts = isMobile
+    ? relatedProducts.slice(0, 2)
+    : relatedProducts;
   const originalPrice = product.discountPercentage
     ? (product.price / (1 - product.discountPercentage / 100)).toFixed(0)
     : product.price;
@@ -66,45 +88,22 @@ const ProductDetail = () => {
       maxWidth: "1240px",
       margin: "0 auto",
       padding: isMobile ? "15px" : "20px",
+      paddingBottom: "80px",
       fontFamily: "'Inter', sans-serif",
     } as React.CSSProperties,
 
-    breadcrumb: {
-      color: "rgba(0,0,0,0.5)",
-      fontSize: "14px",
-      marginBottom: "20px",
-    },
-
-    mainRow: {
-      display: "flex",
-      flexDirection: isMobile ? "column" : "row",
-      gap: isMobile ? "20px" : "40px",
-      marginBottom: "60px",
-    } as React.CSSProperties,
-
-    imagesCol: {
-      display: "flex",
-      flexDirection: isMobile ? "column-reverse" : "row",
-      gap: "15px",
-      flex: "1.2",
-    } as React.CSSProperties,
-
-    sideThumbs: {
-      display: "flex",
-      flexDirection: isMobile ? "row" : "column",
-      gap: "15px",
-      overflowX: isMobile ? "auto" : "visible",
-    } as React.CSSProperties,
-
-    thumb: {
-      width: isMobile ? "calc(33.33% - 10px)" : "120px",
-      minWidth: isMobile ? "100px" : "120px",
-      height: isMobile ? "100px" : "120px",
-      borderRadius: "15px",
-      backgroundColor: "#F0EEED",
-      objectFit: "contain",
-      cursor: "pointer",
-    } as React.CSSProperties,
+    thumb: (isActive: boolean) =>
+      ({
+        width: isMobile ? "calc(33.33% - 10px)" : "120px",
+        minWidth: isMobile ? "100px" : "120px",
+        height: isMobile ? "100px" : "120px",
+        borderRadius: "15px",
+        backgroundColor: "#F0EEED",
+        objectFit: "contain",
+        cursor: "pointer",
+        border: isActive ? "2px solid black" : "2px solid transparent",
+        transition: "all 0.3s ease",
+      }) as React.CSSProperties,
 
     mainImgWrapper: {
       flex: 1,
@@ -113,69 +112,110 @@ const ProductDetail = () => {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      minHeight: isMobile ? "300px" : "auto",
+      minHeight: isMobile ? "300px" : "500px",
+      overflow: "hidden",
     } as React.CSSProperties,
 
-    infoCol: { flex: "1" },
-
-    title: {
-      fontSize: isMobile ? "32px" : "40px",
-      fontWeight: "900",
-      textTransform: "uppercase",
-      margin: "0 0 10px 0",
-      lineHeight: "1.1",
-    } as React.CSSProperties,
-
-    priceRow: {
+    imageBox: {
+      backgroundColor: "#F0F0F0",
+      borderRadius: "20px",
+      padding: "20px",
+      marginBottom: "15px",
+      overflow: "hidden", 
       display: "flex",
       alignItems: "center",
-      gap: "15px",
-      margin: "20px 0",
-    },
-
-    reviewGrid: {
-      display: "grid",
-      gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-      gap: "20px",
+      justifyContent: "center",
+      height: "250px",
     } as React.CSSProperties,
 
-    tabItem: (active: boolean) =>
+    relatedImg: (isHovered: boolean) =>
       ({
-        flex: 1,
-        padding: "15px",
-        cursor: "pointer",
-        borderBottom: active ? "2px solid black" : "1px solid #eee",
-        color: active ? "black" : "rgba(0,0,0,0.5)",
-        fontWeight: active ? "600" : "400",
-        textAlign: "center",
+        width: "100%",
+        height: "100%",
+        objectFit: "contain" as const,
+        transition: "transform 0.4s ease",
+        transform: isHovered ? "scale(1.15)" : "scale(1)",
       }) as React.CSSProperties,
   };
 
   return (
     <div style={s.container}>
-      <div style={s.breadcrumb}>
+      <div
+        style={{
+          color: "rgba(0,0,0,0.5)",
+          fontSize: "14px",
+          marginBottom: "20px",
+        }}
+      >
         Home &gt; Shop &gt; {product?.category} &gt; {product?.title}
       </div>
 
-      <div style={s.mainRow}>
-        <div style={s.imagesCol}>
-          <div style={s.sideThumbs}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          gap: isMobile ? "20px" : "40px",
+          marginBottom: "60px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: isMobile ? "column-reverse" : "row",
+            gap: "15px",
+            flex: "1.2",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: isMobile ? "row" : "column",
+              gap: "15px",
+              overflowX: isMobile ? "auto" : "visible",
+            }}
+          >
             {product?.images?.slice(0, 3).map((img, i) => (
-              <img key={i} src={img} style={s.thumb} alt="thumb" />
+              <img
+                key={i}
+                src={img}
+                style={s.thumb(mainImage === img)}
+                alt="thumb"
+                onClick={() => setMainImage(img)}
+              />
             ))}
           </div>
           <div style={s.mainImgWrapper}>
             <img
-              src={product?.thumbnail}
-              style={{ width: "80%", mixBlendMode: "multiply" }}
+              key={mainImage}
+              src={mainImage}
+              style={{
+                width: "80%",
+                mixBlendMode: "multiply",
+                animation: "fadeIn 0.5s ease",
+              }}
               alt="main"
             />
+            <style>{`
+              @keyframes fadeIn { from { opacity: 0.4; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            `}</style>
           </div>
         </div>
 
-        <div style={s.infoCol}>
-          <h1 style={s.title}>{product?.title}</h1>
-          <div style={{ color: "#FFC633", fontSize: "20px" }}>
+        <div style={{ flex: "1" }}>
+          <h1
+            style={{
+              fontSize: isMobile ? "32px" : "40px",
+              fontWeight: "900",
+              textTransform: "uppercase",
+              margin: "0 0 10px 0",
+              lineHeight: "1.1",
+            }}
+          >
+            {product?.title}
+          </h1>
+          <div
+            style={{ color: "#FFC633", fontSize: "20px", marginBottom: "20px" }}
+          >
             {"★".repeat(Math.floor(product?.rating || 0))}
             <span
               style={{ color: "black", fontSize: "14px", marginLeft: "5px" }}
@@ -184,7 +224,14 @@ const ProductDetail = () => {
             </span>
           </div>
 
-          <div style={s.priceRow}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "15px",
+              margin: "20px 0",
+            }}
+          >
             <span style={{ fontSize: "32px", fontWeight: "700" }}>
               ${product?.price}
             </span>
@@ -233,39 +280,30 @@ const ProductDetail = () => {
               Select Colors
             </div>
             <div style={{ display: "flex", gap: "12px" }}>
-              <div
-                style={{
-                  width: "35px",
-                  height: "35px",
-                  borderRadius: "50%",
-                  backgroundColor: "#4F4631",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "2px solid black",
-                }}
-              >
-                <span style={{ color: "white" }}>✓</span>
-              </div>
-              <div
-                style={{
-                  width: "35px",
-                  height: "35px",
-                  borderRadius: "50%",
-                  backgroundColor: "#314F4A",
-                  cursor: "pointer",
-                }}
-              ></div>
-              <div
-                style={{
-                  width: "35px",
-                  height: "35px",
-                  borderRadius: "50%",
-                  backgroundColor: "#31344F",
-                  cursor: "pointer",
-                }}
-              ></div>
+              {colors.map((c) => (
+                <div
+                  key={c.label}
+                  onClick={() => setSelectedColor(c.label)}
+                  style={{
+                    width: "35px",
+                    height: "35px",
+                    borderRadius: "50%",
+                    backgroundColor: c.hex,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border:
+                      selectedColor === c.label
+                        ? "2px solid black"
+                        : "1px solid transparent",
+                  }}
+                >
+                  {selectedColor === c.label && (
+                    <span style={{ color: "white" }}>✓</span>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -321,7 +359,7 @@ const ProductDetail = () => {
               }}
             >
               <button
-                onClick={() => setQuantity((prev) => (prev > 1 ? prev - 1 : 1))}
+                onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
                 style={{
                   border: "none",
                   cursor: "pointer",
@@ -333,7 +371,7 @@ const ProductDetail = () => {
               </button>
               <span style={{ fontWeight: "600" }}>{quantity}</span>
               <button
-                onClick={() => setQuantity((prev) => prev + 1)}
+                onClick={() => setQuantity((q) => q + 1)}
                 style={{
                   border: "none",
                   cursor: "pointer",
@@ -360,72 +398,83 @@ const ProductDetail = () => {
             >
               Add to Cart
             </button>
+            <button
+              onClick={() => product && toggleWishlist(product)}
+              style={{
+                width: "55px",
+                height: "55px",
+                borderRadius: "50px",
+                border: "1px solid #eee",
+                backgroundColor: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              }}
+            >
+              <Heart
+                size={24}
+                fill={isInWishlist(product.id) ? "red" : "none"}
+                stroke={isInWishlist(product.id) ? "red" : "black"}
+              />
+            </button>
           </div>
         </div>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          borderBottom: "1px solid #eee",
-          marginBottom: "30px",
-        }}
-      >
-        <div style={s.tabItem(false)}>Product Details</div>
-        <div style={s.tabItem(true)}>Rating & Reviews</div>
-        <div style={s.tabItem(false)}>FAQs</div>
-      </div>
-
-      <div style={s.reviewGrid}>
-        {product?.reviews?.map((rev, i) => (
-          <div
-            key={i}
-            style={{
-              border: "1px solid #eee",
-              padding: "25px",
-              borderRadius: "20px",
-            }}
-          >
-            <div style={{ color: "#FFC633", marginBottom: "10px" }}>
-              {"★".repeat(rev.rating || 0)}
-            </div>
-            <div
-              style={{
-                fontWeight: "700",
-                marginBottom: "10px",
-                display: "flex",
-                alignItems: "center",
-                gap: "5px",
-              }}
+      <div style={{ marginTop: "80px", textAlign: "center" }}>
+        <h2
+          style={{
+            fontSize: isMobile ? "32px" : "40px",
+            fontWeight: "900",
+            marginBottom: "40px",
+            textTransform: "uppercase",
+          }}
+        >
+          You might also like
+        </h2>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr 1fr" : "1fr 1fr 1fr 1fr",
+            gap: "20px",
+          }}
+        >
+          {displayedRelatedProducts.map((item) => (
+            <Link
+              key={item.id}
+              to={`/product/${item.id}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+              onMouseEnter={() => setHoveredId(item.id)}
+              onMouseLeave={() => setHoveredId(null)}
             >
-              {rev.reviewerName} <span style={{ color: "#01AB31" }}>✔</span>
-            </div>
-            <p
-              style={{
-                color: "rgba(0,0,0,0.6)",
-                fontSize: "14px",
-                lineHeight: "1.5",
-              }}
-            >
-              "{rev.comment}"
-            </p>
-            <div
-              style={{
-                marginTop: "20px",
-                color: "rgba(0,0,0,0.4)",
-                fontSize: "14px",
-                fontWeight: "600",
-              }}
-            >
-              Posted on{" "}
-              {new Date(rev.date).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </div>
-          </div>
-        ))}
+              <div style={{ textAlign: "left" }}>
+                <div style={s.imageBox}>
+                  <img
+                    src={item.thumbnail}
+                    alt={item.title}
+                    style={s.relatedImg(hoveredId === item.id)}
+                  />
+                </div>
+                <h3
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "700",
+                    margin: "0 0 5px 0",
+                  }}
+                >
+                  {item.title}
+                </h3>
+                <div style={{ color: "#FFC633", marginBottom: "5px" }}>
+                  {"★".repeat(Math.floor(item.rating || 0))}
+                </div>
+                <div style={{ fontSize: "20px", fontWeight: "700" }}>
+                  ${item.price}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

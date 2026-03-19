@@ -13,8 +13,13 @@ export interface CartItem {
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (item: CartItem) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  removeFromCart: (id: number, size: string, color: string) => void;
+  updateQuantity: (
+    id: number,
+    size: string,
+    color: string,
+    quantity: number,
+  ) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -32,12 +37,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const addToCart = (item: CartItem) => {
     setCartItems((prev) => {
       const isExist = prev.find(
-        (i) => i.id === item.id && i.size === item.size,
+        (i) =>
+          i.id === item.id && i.size === item.size && i.color === item.color,
       );
 
       if (isExist) {
         return prev.map((i) =>
-          i.id === item.id && i.size === item.size
+          i.id === item.id && i.size === item.size && i.color === item.color
             ? { ...i, quantity: i.quantity + item.quantity }
             : i,
         );
@@ -46,14 +52,28 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
-  const removeFromCart = (id: number) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  const removeFromCart = (id: number, size: string, color: string) => {
+    setCartItems((prev) =>
+      prev.filter(
+        (item) =>
+          !(item.id === id && item.size === size && item.color === color),
+      ),
+    );
   };
 
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (
+    id: number,
+    size: string,
+    color: string,
+    quantity: number,
+  ) => {
     if (quantity < 1) return;
     setCartItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity } : item)),
+      prev.map((item) =>
+        item.id === id && item.size === size && item.color === color
+          ? { ...item, quantity }
+          : item,
+      ),
     );
   };
 

@@ -4,51 +4,64 @@ import ProductCard from "./ProductCard";
 
 const Products = () => {
   const [items, setItems] = useState<Product[]>([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
     fetch("https://dummyjson.com/products?limit=8")
       .then((res) => res.json())
       .then((data: ProductResponse) => setItems(data.products));
+
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const containerStyle: React.CSSProperties = {
     maxWidth: "1240px",
     margin: "0 auto",
-    padding: "60px 20px",
+    padding: isMobile ? "20px 16px" : "60px 20px", 
   };
 
   const titleStyle: React.CSSProperties = {
-    fontSize: "48px",
-    fontWeight: "800",
+    fontSize: isMobile ? "32px" : "48px",
+    fontWeight: "900", 
     textAlign: "center",
-    marginBottom: "40px",
-    fontFamily: "Integral_CF, sans-serif", 
+    marginBottom: isMobile ? "32px" : "40px",
+    fontFamily: "Integral_CF, sans-serif",
+    textTransform: "uppercase",
   };
 
   const gridStyle: React.CSSProperties = {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "20px",
-    justifyContent: "space-between",
+    display: "grid",
+    gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
+    gap: isMobile ? "16px" : "20px", 
+    marginBottom: "24px",
   };
 
   const btnStyle: React.CSSProperties = {
     display: "block",
-    margin: "30px auto 60px auto",
-    padding: "15px 60px",
-    borderRadius: "50px",
+    margin: "0 auto",
+    padding: "16px 54px", 
+    borderRadius: "62px",
     border: "1px solid rgba(0,0,0,0.1)",
     backgroundColor: "#fff",
     fontSize: "16px",
+    fontWeight: "500",
     cursor: "pointer",
+    width: isMobile ? "100%" : "auto", 
+    color: "#000",
   };
+
+
+  const arrivals = isMobile ? items.slice(0, 2) : items.slice(0, 4);
+  const topSelling = isMobile ? items.slice(4, 6) : items.slice(4, 8);
 
   return (
     <div style={containerStyle}>
-      <section>
+      <section style={{ marginBottom: "40px" }}>
         <h2 style={titleStyle}>NEW ARRIVALS</h2>
         <div style={gridStyle}>
-          {items.slice(0, 4).map((item) => (
+          {arrivals.map((item) => (
             <ProductCard key={item.id} product={item} />
           ))}
         </div>
@@ -56,13 +69,17 @@ const Products = () => {
       </section>
 
       <hr
-        style={{ border: "0", borderTop: "1px solid #eee", margin: "40px 0" }}
+        style={{
+          border: "0",
+          borderTop: "1px solid #f0f0f0",
+          margin: "40px 0",
+        }}
       />
 
-      <section>
+      <section style={{ marginBottom: "40px" }}>
         <h2 style={titleStyle}>TOP SELLING</h2>
         <div style={gridStyle}>
-          {items.slice(4, 8).map((item) => (
+          {topSelling.map((item) => (
             <ProductCard key={item.id} product={item} />
           ))}
         </div>
