@@ -32,8 +32,8 @@ function App() {
   return (
     <WishlistProvider>
       <CartProvider>
-        <div className="bg-black min-h-screen">
-          <div className="max-w-[1280px] mx-auto w-full bg-white shadow-2xl">
+        <div className="min-h-screen">
+          <div className=" mx-auto w-full bg-white shadow-2xl">
             <Navbar />
             <Routes>
               <Route
