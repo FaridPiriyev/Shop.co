@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Product, ProductResponse } from "../types/product";
 import ProductCard from "./ProductCard";
 import { AlertCircle, RefreshCcw, Loader2 } from "lucide-react";
@@ -10,6 +10,11 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const arrivalsRef = useRef<HTMLDivElement>(null);
+  const topSellingRef = useRef<HTMLDivElement>(null);
+  const [arrivalsIndex, setArrivalsIndex] = useState(0);
+  const [topSellingIndex, setTopSellingIndex] = useState(0);
 
   const fetchProducts = useCallback(() => {
     setLoading(true);
@@ -41,6 +46,33 @@ const Products = () => {
     navigate("/category/all?limit=20&skip=0");
   };
 
+  const handleSliderScroll = (
+    ref: React.RefObject<HTMLDivElement | null>,
+    setIndex: (i: number) => void,
+    total: number,
+  ) => {
+    const el = ref.current;
+    if (!el) return;
+    const scrollPos = el.scrollLeft;
+    const itemWidth = el.scrollWidth / total;
+    const newIndex = Math.round(scrollPos / itemWidth);
+    setIndex(newIndex);
+  };
+
+  const scrollToIndex = (
+    ref: React.RefObject<HTMLDivElement | null>,
+    index: number,
+    total: number,
+  ) => {
+    const el = ref.current;
+    if (!el) return;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    el.scrollTo({
+      left: (maxScroll / (total - 1)) * index,
+      behavior: "smooth",
+    });
+  };
+
   const containerStyle: React.CSSProperties = {
     maxWidth: "1240px",
     margin: "0 auto",
@@ -58,9 +90,33 @@ const Products = () => {
 
   const gridStyle: React.CSSProperties = {
     display: "grid",
-    gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
-    gap: isMobile ? "16px" : "20px",
+    gridTemplateColumns: "repeat(4, 1fr)",
+    gap: "20px",
     marginBottom: "24px",
+  };
+
+  const sliderWrapperStyle: React.CSSProperties = {
+    display: "flex",
+    overflowX: "auto",
+    gap: "16px",
+    scrollSnapType: "x mandatory",
+    WebkitOverflowScrolling: "touch",
+    scrollbarWidth: "none",
+    msOverflowStyle: "none",
+    marginBottom: "16px",
+    paddingBottom: "4px",
+  };
+
+  const sliderCardStyle: React.CSSProperties = {
+    flex: "0 0 calc(50% - 8px)",
+    scrollSnapAlign: "start",
+  };
+
+  const dotsContainerStyle: React.CSSProperties = {
+    display: "flex",
+    justifyContent: "center",
+    gap: "6px",
+    marginBottom: "20px",
   };
 
   const btnStyle: React.CSSProperties = {
@@ -117,27 +173,64 @@ const Products = () => {
   const arrivals = items.slice(0, 4);
   const topSelling = items.slice(4, 8);
 
+  const renderSection = (
+    title: string,
+    products: Product[],
+    sliderRef: React.RefObject<HTMLDivElement | null>,
+    activeIndex: number,
+    setIndex: (i: number) => void,
+  ) => (
+    <section style={{ marginBottom: "40px" }}>
+      <h2 style={titleStyle}>{title}</h2>
+      {loading ? (
+        <div className="flex justify-center py-10">
+          <Loader2 className="animate-spin" />
+        </div>
+      ) : isMobile ? (
+        <>
+          <style>{`.no-scrollbar::-webkit-scrollbar { display: none; }`}</style>
+          <div
+            ref={sliderRef}
+            className="no-scrollbar"
+            style={sliderWrapperStyle}
+            onScroll={() =>
+              handleSliderScroll(sliderRef, setIndex, products.length)
+            }
+          >
+            {products.map((item) => (
+              <div key={item.id} style={sliderCardStyle}>
+                <ProductCard product={item} />
+              </div>
+            ))}
+          </div>
+          <button style={btnStyle} onClick={handleViewAll}>
+            View All
+          </button>
+        </>
+      ) : (
+        <>
+          <div style={gridStyle}>
+            {products.map((item) => (
+              <ProductCard key={item.id} product={item} />
+            ))}
+          </div>
+          <button style={btnStyle} onClick={handleViewAll}>
+            View All
+          </button>
+        </>
+      )}
+    </section>
+  );
+
   return (
     <div style={containerStyle}>
-      <section style={{ marginBottom: "40px" }}>
-        <h2 style={titleStyle}>NEW ARRIVALS</h2>
-        {loading ? (
-          <div className="flex justify-center py-10">
-            <Loader2 className="animate-spin" />
-          </div>
-        ) : (
-          <>
-            <div style={gridStyle}>
-              {arrivals.map((item) => (
-                <ProductCard key={item.id} product={item} />
-              ))}
-            </div>
-            <button style={btnStyle} onClick={handleViewAll}>
-              View All
-            </button>
-          </>
-        )}
-      </section>
+      {renderSection(
+        "NEW ARRIVALS",
+        arrivals,
+        arrivalsRef,
+        arrivalsIndex,
+        setArrivalsIndex,
+      )}
 
       <hr
         style={{
@@ -147,25 +240,13 @@ const Products = () => {
         }}
       />
 
-      <section style={{ marginBottom: "40px" }}>
-        <h2 style={titleStyle}>TOP SELLING</h2>
-        {loading ? (
-          <div className="flex justify-center py-10">
-            <Loader2 className="animate-spin" />
-          </div>
-        ) : (
-          <>
-            <div style={gridStyle}>
-              {topSelling.map((item) => (
-                <ProductCard key={item.id} product={item} />
-              ))}
-            </div>
-            <button style={btnStyle} onClick={handleViewAll}>
-              View All
-            </button>
-          </>
-        )}
-      </section>
+      {renderSection(
+        "TOP SELLING",
+        topSelling,
+        topSellingRef,
+        topSellingIndex,
+        setTopSellingIndex,
+      )}
     </div>
   );
 };

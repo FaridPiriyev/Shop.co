@@ -17,7 +17,7 @@ const CartPage = () => {
   if (cartItems.length === 0) {
     return (
       <div className="max-w-[1240px] mx-auto px-4 py-20 text-center">
-        <h1 className="text-4xl font-black uppercase mb-4">
+        <h1 className="text-3xl md:text-4xl font-black uppercase mb-4">
           YOUR CART IS EMPTY
         </h1>
         <p className="text-gray-500 mb-8">
@@ -25,7 +25,7 @@ const CartPage = () => {
         </p>
         <Link
           to="/"
-          className="bg-black text-white px-8 py-4 rounded-full font-medium inline-block"
+          className="bg-black text-white px-8 py-4 rounded-full font-medium inline-block transition active:scale-95"
         >
           Go to Shop
         </Link>
@@ -34,37 +34,51 @@ const CartPage = () => {
   }
 
   return (
-    <div className="max-w-[1240px] mx-auto px-4 py-10">
-      <div className="text-sm text-gray-500 mb-6 flex gap-2">
-        <Link to="/">Home</Link> &gt; <span className="text-black">Cart</span>
+    <div className="max-w-[1240px] mx-auto px-4 py-8 md:py-10">
+      <div className="text-sm text-black/60 mb-6 flex items-center gap-2">
+        <Link to="/" className="hover:text-black transition">
+          Home
+        </Link>
+        <span className="opacity-40">&gt;</span>
+        <span className="text-black">Cart</span>
       </div>
-      <h1 className="text-4xl font-black uppercase mb-8">YOUR CART</h1>
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="flex-[1.5] border border-gray-200 rounded-[20px] p-4 lg:p-6 h-fit">
-          {cartItems.map((item) => (
+      <h1 className="text-3xl md:text-4xl font-black uppercase mb-8">
+        YOUR CART
+      </h1>
+
+      <div className="flex flex-col lg:flex-row gap-5">
+        <div className="flex-[1.6] border border-black/10 rounded-[20px] px-4 md:px-6 h-fit bg-white">
+          {cartItems.map((item, index) => (
             <div
               key={`${item.id}-${item.size}-${item.color}`}
-              className="flex gap-4 py-6 border-b border-gray-200 last:border-0 last:pb-0 first:pt-0"
+              className={`flex gap-4 py-6 ${
+                index !== cartItems.length - 1 ? "border-b border-black/10" : ""
+              }`}
             >
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-28 h-28 object-contain rounded-[10px] bg-[#F0EEED] p-2"
-              />
-              <div className="flex-1 flex flex-col justify-between">
+              <div className="w-24 h-24 md:w-32 md:h-32 bg-[#F0EEED] rounded-[10px] flex items-center justify-center p-2 flex-shrink-0">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+
+              <div className="flex-1 flex flex-col justify-between py-1">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-bold text-xl">{item.title}</h3>
+                    <h3 className="font-bold text-lg md:text-xl line-clamp-1">
+                      {item.title}
+                    </h3>
                     <p className="text-sm mt-1">
                       Size:{" "}
-                      <span className="text-gray-500">
+                      <span className="text-black/60">
                         {item.size || "Standard"}
                       </span>
                     </p>
-                    <p className="text-sm mt-1">
+                    <p className="text-sm mt-0.5">
                       Color:{" "}
-                      <span className="text-gray-500">
+                      <span className="text-black/60">
                         {item.color || "Default"}
                       </span>
                     </p>
@@ -73,15 +87,17 @@ const CartPage = () => {
                     onClick={() =>
                       removeFromCart(item.id, item.size, item.color)
                     }
-                    className="text-[#FF3333] hover:opacity-75 transition-opacity"
+                    className="text-[#FF3333] hover:scale-110 transition-transform"
                   >
-                    <Trash fill="#FF3333" stroke="#FF3333" size={24} />
+                    <Trash fill="#FF3333" stroke="#FF3333" size={22} />
                   </button>
                 </div>
 
-                <div className="flex justify-between items-center mt-4">
-                  <span className="text-2xl font-bold">${item.price}</span>
-                  <div className="flex items-center justify-between w-[120px] bg-[#F0F0F0] px-4 py-2.5 rounded-full">
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-xl md:text-2xl font-bold">
+                    ${item.price}
+                  </span>
+                  <div className="flex items-center justify-between w-[100px] md:w-[120px] bg-[#F0F0F0] px-3 py-2 md:px-4 md:py-2.5 rounded-full">
                     <button
                       onClick={() =>
                         updateQuantity(
@@ -91,11 +107,11 @@ const CartPage = () => {
                           item.quantity - 1,
                         )
                       }
-                      className="text-xl hover:text-gray-600"
+                      className="hover:opacity-60 transition"
                     >
-                      <Minus size={20} />
+                      <Minus size={18} />
                     </button>
-                    <span className="font-semibold text-lg">
+                    <span className="font-medium text-base md:text-lg">
                       {item.quantity}
                     </span>
                     <button
@@ -107,9 +123,9 @@ const CartPage = () => {
                           item.quantity + 1,
                         )
                       }
-                      className="text-xl hover:text-gray-600"
+                      className="hover:opacity-60 transition"
                     >
-                      <Plus size={20} />
+                      <Plus size={18} />
                     </button>
                   </div>
                 </div>
@@ -118,46 +134,54 @@ const CartPage = () => {
           ))}
         </div>
 
-        <div className="flex-1 border border-gray-200 rounded-[20px] p-6 h-fit">
-          <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
-          <div className="space-y-5 text-xl">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Subtotal</span>
+        <div className="flex-1 border border-black/10 rounded-[20px] p-5 md:p-6 h-fit bg-white">
+          <h2 className="text-xl md:text-2xl font-bold mb-6">Order Summary</h2>
+
+          <div className="space-y-4">
+            <div className="flex justify-between text-lg md:text-xl">
+              <span className="text-black/60">Subtotal</span>
               <span className="font-bold">${subtotal}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Discount (-20%)</span>
+
+            <div className="flex justify-between text-lg md:text-xl">
+              <span className="text-black/60">Discount (-20%)</span>
               <span className="text-[#FF3333] font-bold">
-                -${discount.toFixed(0)}
+                -${Math.round(discount)}
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Delivery Fee</span>
+
+            <div className="flex justify-between text-lg md:text-xl">
+              <span className="text-black/60">Delivery Fee</span>
               <span className="font-bold">${deliveryFee}</span>
             </div>
-            <hr className="my-2" />
-            <div className="flex justify-between text-2xl font-bold">
+
+            <hr className="border-black/10 my-1" />
+
+            <div className="flex justify-between text-xl md:text-2xl font-bold pt-1">
               <span>Total</span>
-              <span>${total.toFixed(0)}</span>
+              <span>${Math.round(total)}</span>
             </div>
           </div>
 
-          <div className="mt-6 flex gap-3">
+          <div className="mt-6 flex flex-row gap-3">
             <div className="flex-1 bg-[#F0F0F0] px-4 py-3 rounded-full flex items-center gap-2">
-              <Tag color="gray" size={20} />
+              <Tag className="text-black/40" size={20} />
               <input
                 type="text"
                 placeholder="Add promo code"
-                className="bg-transparent outline-none w-full text-black placeholder:text-gray-500"
+                className="bg-transparent border-none outline-none w-full text-sm md:text-base placeholder:text-black/40"
               />
             </div>
-            <button className="bg-black text-white px-8 py-3 rounded-full font-medium transition hover:bg-gray-800">
+            <button className="bg-black text-white px-6 md:px-8 py-3 rounded-full font-medium text-sm md:text-base transition hover:bg-black/80 active:scale-95">
               Apply
             </button>
           </div>
-
-          <button className="w-full bg-black text-white mt-6 py-4 rounded-full font-medium flex items-center justify-center gap-3 transition hover:bg-gray-800">
-            Go to Checkout <ArrowRight size={20} />
+          <button className="w-full bg-black text-white mt-4 md:mt-6 py-4 rounded-full font-medium flex items-center justify-center gap-3 transition hover:bg-black/80 active:scale-95 group">
+            Go to Checkout
+            <ArrowRight
+              size={20}
+              className="group-hover:translate-x-1 transition-transform"
+            />
           </button>
         </div>
       </div>
