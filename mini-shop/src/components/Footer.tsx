@@ -147,23 +147,23 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="relative bg-[#F0F0F0] pt-40 pb-10 mt-20">
+    <footer className="relative bg-[#F0F0F0] dark:bg-black pt-40 pb-10 mt-20">
       <div className="max-w-[1240px] mx-auto px-4">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-32px)] max-w-[1240px] bg-black rounded-[20px] py-9 px-6 md:px-16 flex flex-col md:flex-row justify-between items-center gap-8 shadow-xl">
-          <h2 className="text-white text-3xl md:text-[40px] font-black leading-tight uppercase max-w-[550px]">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-32px)] max-w-[1240px] bg-black dark:bg-white rounded-[20px] py-9 px-6 md:px-16 flex flex-col md:flex-row justify-between items-center gap-8 shadow-xl">
+          <h2 className="text-white dark:text-black text-3xl md:text-[40px] font-black leading-tight uppercase max-w-[550px]">
             Stay upto date about our latest offers
           </h2>
 
           <div className="w-full md:w-[349px] flex flex-col gap-3">
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40 w-5 h-5" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40 dark:text-white w-5 h-5" />
               <input
                 type="email"
                 placeholder="Enter your email address"
-                className="w-full py-3 pl-12 pr-4 rounded-full bg-white text-black outline-none text-sm md:text-base placeholder:text-black/40"
+                className="w-full py-3 pl-12 pr-4 rounded-full bg-white dark:bg-black text-black outline-none text-sm md:text-base placeholder:text-black/40 dark:placeholder:text-white"
               />
             </div>
-            <button className="w-full py-3 rounded-full bg-white text-black font-medium hover:bg-gray-100 transition-colors text-sm md:text-base active:scale-95 transition-transform">
+            <button className="w-full py-3 rounded-full bg-white dark:bg-black text-black dark:text-white font-medium hover:bg-gray-100 dark:hover:bg-black transition-colors text-sm md:text-base active:scale-95 transition-transform">
               Subscribe to Newsletter
             </button>
           </div>
@@ -174,7 +174,7 @@ const Footer: React.FC = () => {
             <h1 className="text-3xl font-black mb-6 tracking-tighter">
               SHOP.CO
             </h1>
-            <p className="text-black/60 text-sm leading-6 mb-8 max-w-[248px]">
+            <p className="text-black/60 dark:text-white text-sm leading-6 mb-8 max-w-[248px]">
               We have clothes that suits your style and which you're proud to
               wear. From women to men.
             </p>
@@ -203,7 +203,7 @@ const Footer: React.FC = () => {
               ].map((social, i) => (
                 <div
                   key={i}
-                  className={`w-7 h-7 rounded-full border border-black/10 flex items-center justify-center cursor-pointer hover:bg-black hover:text-white transition-all ${social.bg} ${social.text}`}
+                  className={`w-7 h-7 rounded-full border border-black/10 flex items-center justify-center cursor-pointer hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all ${social.bg} ${social.text}`}
                 >
                   {social.icon}
                 </div>
@@ -214,10 +214,10 @@ const Footer: React.FC = () => {
             <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6 font-['Satoshi']">
               Company
             </h3>
-            <ul className="flex flex-col gap-4 text-black/60 text-sm md:text-base">
+            <ul className="flex flex-col gap-4 text-black/60 dark:text-white text-sm md:text-base">
               {["About", "Features", "Works", "Career"].map((item) => (
                 <li key={item}>
-                  <a href="#" className="hover:text-black transition-colors">
+                  <a href="#" className="hover:text-black dark:hover:text-gray-400 transition-colors">
                     {item}
                   </a>
                 </li>
@@ -229,7 +229,7 @@ const Footer: React.FC = () => {
             <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6 font-['Satoshi']">
               Help
             </h3>
-            <ul className="flex flex-col gap-4 text-black/60 text-sm md:text-base">
+            <ul className="flex flex-col gap-4 text-black/60 dark:text-white text-sm md:text-base">
               {[
                 "Customer Support",
                 "Delivery Details",
@@ -237,7 +237,7 @@ const Footer: React.FC = () => {
                 "Privacy Policy",
               ].map((item) => (
                 <li key={item}>
-                  <a href="#" className="hover:text-black transition-colors">
+                  <a href="#" className="hover:text-black dark:hover:text-gray-400 transition-colors">
                     {item}
                   </a>
                 </li>
@@ -249,11 +249,11 @@ const Footer: React.FC = () => {
             <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6 font-['Satoshi']">
               FAQ
             </h3>
-            <ul className="flex flex-col gap-4 text-black/60 text-sm md:text-base">
+            <ul className="flex flex-col gap-4 text-black/60 dark:text-white text-sm md:text-base">
               {["Account", "Manage Deliveries", "Orders", "Payments"].map(
                 (item) => (
                   <li key={item}>
-                    <a href="#" className="hover:text-black transition-colors">
+                    <a href="#" className="hover:text-black dark:hover:text-gray-400 transition-colors">
                       {item}
                     </a>
                   </li>
@@ -266,7 +266,7 @@ const Footer: React.FC = () => {
             <h3 className="font-medium text-sm md:text-base tracking-[3px] uppercase mb-6 font-['Satoshi']">
               Resources
             </h3>
-            <ul className="flex flex-col gap-4 text-black/60 text-sm md:text-base">
+            <ul className="flex flex-col gap-4 text-black/60 text-sm md:text-base dark:text-white">
               {[
                 "Free eBooks",
                 "Development Tutorial",
@@ -274,7 +274,7 @@ const Footer: React.FC = () => {
                 "Youtube Playlist",
               ].map((item) => (
                 <li key={item}>
-                  <a href="#" className="hover:text-black transition-colors">
+                  <a href="#" className="hover:text-black transition-colors dark:hover:text-gray-400">
                     {item}
                   </a>
                 </li>
@@ -284,7 +284,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="pt-6 border-t border-black/10 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-black/60 text-sm">
+          <p className="text-black/60 dark:text-white text-sm">
             Shop.co © 2000-2023, All Rights Reserved
           </p>
 

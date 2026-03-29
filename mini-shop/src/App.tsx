@@ -32,8 +32,8 @@ function App() {
   return (
     <WishlistProvider>
       <CartProvider>
-        <div className="min-h-screen">
-          <div className=" mx-auto w-full bg-white shadow-2xl">
+        <div className="min-h-screen bg-white dark:bg-[#0a0a0a] text-black dark:text-white transition-colors duration-300">
+          <div className="mx-auto w-full bg-white dark:bg-[#0a0a0a] shadow-2xl">
             <Navbar />
             <Routes>
               <Route

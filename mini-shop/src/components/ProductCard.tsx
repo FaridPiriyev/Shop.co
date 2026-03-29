@@ -12,95 +12,43 @@ const ProductCard = ({ product }: { product: Product }) => {
     (1 - product.discountPercentage / 100)
   ).toFixed(0);
 
-  const styles = {
-    card: {
-      flex: "1",
-      minWidth: "250px",
-      fontFamily: "Arial, sans-serif",
-      cursor: "pointer",
-      transition: "transform 0.2s ease-in-out",
-    } as React.CSSProperties,
-    imageWrapper: {
-      backgroundColor: "#F0EEED",
-      borderRadius: "20px",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      aspectRatio: "1 / 1",
-      overflow: "hidden",
-      marginBottom: "15px",
-    } as React.CSSProperties,
-    image: {
-      width: "100%",
-      height: "auto",
-      mixBlendMode: "multiply" as any,
-      transition: "transform 0.4s ease",
-      transform: isHovered ? "scale(1.1)" : "scale(1)",
-    } as React.CSSProperties,
-    title: {
-      fontSize: "18px",
-      fontWeight: "700",
-      margin: "10px 0 5px 0",
-      color: "#000",
-    } as React.CSSProperties,
-    ratingRow: {
-      display: "flex",
-      alignItems: "center",
-      gap: "10px",
-      marginBottom: "8px",
-    } as React.CSSProperties,
-    stars: {
-      color: "#FFC633",
-      fontSize: "22px",
-      letterSpacing: "2px",
-    } as React.CSSProperties,
-    ratingText: {
-      color: "rgba(0,0,0,0.6)",
-      fontSize: "14px",
-    } as React.CSSProperties,
-    priceRow: {
-      display: "flex",
-      alignItems: "center",
-      gap: "10px",
-      fontSize: "22px",
-      fontWeight: "700",
-    } as React.CSSProperties,
-    oldPrice: {
-      color: "rgba(0, 0, 0, 0.4)",
-      textDecoration: "line-through",
-      fontWeight: "400",
-    } as React.CSSProperties,
-    discountBadge: {
-      backgroundColor: "rgba(255, 51, 51, 0.1)",
-      color: "#FF3333",
-      padding: "4px 12px",
-      borderRadius: "50px",
-      fontSize: "12px",
-      fontWeight: "500",
-    } as React.CSSProperties,
-  };
-
   return (
     <div
-      style={styles.card}
       onClick={() => navigate(`/product/${product.id}`)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      className="flex-1 min-w-[250px] cursor-pointer transition-transform duration-200 group"
     >
-      <div style={styles.imageWrapper}>
-        <img src={product.thumbnail} alt={product.title} style={styles.image} />
+      <div className="bg-[#F0EEED] dark:bg-zinc-800 rounded-[20px] aspect-square flex items-center justify-center overflow-hidden mb-4 transition-colors duration-300">
+        <img
+          src={product.thumbnail}
+          alt={product.title}
+          className={`w-full h-auto mix-blend-multiply dark:mix-blend-normal transition-transform duration-400 
+            ${isHovered ? "scale-110" : "scale-100"}`}
+        />
       </div>
-      <h3 style={styles.title}>{product.title}</h3>
-      <div style={styles.ratingRow}>
-        <div style={styles.stars}>{"★".repeat(Math.floor(product.rating))}</div>
-        <span style={styles.ratingText}>{product.rating}/5</span>
+
+      <h3 className="text-[18px] font-bold my-2.5 text-black dark:text-white transition-colors">
+        {product.title}
+      </h3>
+      <div className="flex items-center gap-2.5 mb-2">
+        <div className="text-[#FFC633] text-[22px] tracking-[2px]">
+          {"★".repeat(Math.floor(product.rating))}
+        </div>
+        <span className="text-sm text-black/60 dark:text-zinc-400 font-medium">
+          {product.rating}/5
+        </span>
       </div>
-      <div style={styles.priceRow}>
-        <span>${product.price}</span>
+
+      <div className="flex items-center gap-2.5 text-[22px] font-bold">
+        <span className="text-black dark:text-white">${product.price}</span>
+
         {hasDiscount && (
           <>
-            <span style={styles.oldPrice}>${originalPrice}</span>
-            <span style={styles.discountBadge}>
+            <span className="text-black/40 dark:text-white/30 line-through font-normal">
+              ${originalPrice}
+            </span>
+            <span className="bg-red-500/10 text-[#FF3333] px-3 py-1 rounded-full text-xs font-medium">
               -{Math.round(product.discountPercentage)}%
             </span>
           </>

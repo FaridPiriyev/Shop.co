@@ -52,7 +52,7 @@ const Slider: React.FC = () => {
   }
 
   return (
-    <section className="py-16 px-4 md:px-10 bg-white overflow-hidden">
+    <section className="py-16 px-4 md:px-10 bg-white dark:bg-black overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-10 gap-6">
           <h2 className="text-3xl md:text-5xl font-[900] uppercase tracking-tighter leading-none">
@@ -98,7 +98,7 @@ const Slider: React.FC = () => {
           >
             {comments.map((comment) => (
               <SwiperSlide key={comment.id} className="h-auto">
-                <div className="border border-gray-100 rounded-[20px] p-6 md:p-8 h-full flex flex-col gap-4 bg-white transition-all duration-300 hover:border-gray-300 select-none">
+                <div className="border border-gray-100 rounded-[20px] p-6 md:p-8 h-full flex flex-col gap-4 bg-white dark:bg-black transition-all duration-300 hover:border-gray-300 select-none">
                   <div className="flex text-[#FFC633] gap-1">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} size={20} fill="#FFC633" strokeWidth={0} />
@@ -113,13 +113,13 @@ const Slider: React.FC = () => {
                     <div className="bg-[#01AB31] rounded-full w-[22px] h-[22px] flex items-center justify-center">
                       <Check
                         size={14}
-                        className="text-white"
+                        className="text-white dark:text-black"
                         strokeWidth={4} 
                       />
                     </div>
                   </div>
 
-                  <p className="text-gray-600 leading-relaxed italic">
+                  <p className="text-gray-600 dark:text-white leading-relaxed italic">
                     "
                     {comment.body.length > 120
                       ? `${comment.body.substring(0, 120)}...`

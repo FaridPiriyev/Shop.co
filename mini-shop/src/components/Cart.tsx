@@ -25,7 +25,7 @@ const CartPage = () => {
         </p>
         <Link
           to="/"
-          className="bg-black text-white px-8 py-4 rounded-full font-medium inline-block transition active:scale-95"
+          className="bg-black dark:bg-white text-white dark:text-black px-8 py-4 rounded-full font-medium inline-block transition active:scale-95"
         >
           Go to Shop
         </Link>
@@ -35,12 +35,12 @@ const CartPage = () => {
 
   return (
     <div className="max-w-[1240px] mx-auto px-4 py-8 md:py-10">
-      <div className="text-sm text-black/60 mb-6 flex items-center gap-2">
-        <Link to="/" className="hover:text-black transition">
+      <div className="text-sm text-black/60 dark:text-white mb-6 flex items-center gap-2">
+        <Link to="/" className="hover:text-black dark:hover:text-white transition">
           Home
         </Link>
         <span className="opacity-40">&gt;</span>
-        <span className="text-black">Cart</span>
+        <span className="text-black dark:text-white">Cart</span>
       </div>
 
       <h1 className="text-3xl md:text-4xl font-black uppercase mb-8">
@@ -48,7 +48,7 @@ const CartPage = () => {
       </h1>
 
       <div className="flex flex-col lg:flex-row gap-5">
-        <div className="flex-[1.6] border border-black/10 rounded-[20px] px-4 md:px-6 h-fit bg-white">
+        <div className="flex-[1.6] border border-black/10 rounded-[20px] px-4 md:px-6 h-fit bg-white dark:bg-black">
           {cartItems.map((item, index) => (
             <div
               key={`${item.id}-${item.size}-${item.color}`}
@@ -56,7 +56,7 @@ const CartPage = () => {
                 index !== cartItems.length - 1 ? "border-b border-black/10" : ""
               }`}
             >
-              <div className="w-24 h-24 md:w-32 md:h-32 bg-[#F0EEED] rounded-[10px] flex items-center justify-center p-2 flex-shrink-0">
+              <div className="w-24 h-24 md:w-32 md:h-32 bg-[#F0EEED] dark:bg-black rounded-[10px] flex items-center justify-center p-2 flex-shrink-0">
                 <img
                   src={item.image}
                   alt={item.title}
@@ -72,13 +72,13 @@ const CartPage = () => {
                     </h3>
                     <p className="text-sm mt-1">
                       Size:{" "}
-                      <span className="text-black/60">
+                      <span className="text-black/60 dark:text-white">
                         {item.size || "Standard"}
                       </span>
                     </p>
                     <p className="text-sm mt-0.5">
                       Color:{" "}
-                      <span className="text-black/60">
+                      <span className="text-black/60 dark:text-white">
                         {item.color || "Default"}
                       </span>
                     </p>
@@ -97,7 +97,7 @@ const CartPage = () => {
                   <span className="text-xl md:text-2xl font-bold">
                     ${item.price}
                   </span>
-                  <div className="flex items-center justify-between w-[100px] md:w-[120px] bg-[#F0F0F0] px-3 py-2 md:px-4 md:py-2.5 rounded-full">
+                  <div className="flex items-center justify-between w-[100px] md:w-[120px] bg-[#F0F0F0] dark:bg-black px-3 py-2 md:px-4 md:py-2.5 rounded-full">
                     <button
                       onClick={() =>
                         updateQuantity(
@@ -134,24 +134,24 @@ const CartPage = () => {
           ))}
         </div>
 
-        <div className="flex-1 border border-black/10 rounded-[20px] p-5 md:p-6 h-fit bg-white">
+        <div className="flex-1 border border-black/10 rounded-[20px] p-5 md:p-6 h-fit bg-white dark:bg-black">
           <h2 className="text-xl md:text-2xl font-bold mb-6">Order Summary</h2>
 
           <div className="space-y-4">
             <div className="flex justify-between text-lg md:text-xl">
-              <span className="text-black/60">Subtotal</span>
+              <span className="text-black/60 dark:text-white">Subtotal</span>
               <span className="font-bold">${subtotal}</span>
             </div>
 
             <div className="flex justify-between text-lg md:text-xl">
-              <span className="text-black/60">Discount (-20%)</span>
+              <span className="text-black/60 dark:text-white">Discount (-20%)</span>
               <span className="text-[#FF3333] font-bold">
                 -${Math.round(discount)}
               </span>
             </div>
 
             <div className="flex justify-between text-lg md:text-xl">
-              <span className="text-black/60">Delivery Fee</span>
+              <span className="text-black/60 dark:text-white">Delivery Fee</span>
               <span className="font-bold">${deliveryFee}</span>
             </div>
 
@@ -164,19 +164,19 @@ const CartPage = () => {
           </div>
 
           <div className="mt-6 flex flex-row gap-3">
-            <div className="flex-1 bg-[#F0F0F0] px-4 py-3 rounded-full flex items-center gap-2">
-              <Tag className="text-black/40" size={20} />
+            <div className="flex-1 bg-[#F0F0F0] dark:bg-black px-4 py-3 rounded-full flex items-center gap-2">
+              <Tag className="text-black/40 dark:text-white" size={20} />
               <input
                 type="text"
                 placeholder="Add promo code"
-                className="bg-transparent border-none outline-none w-full text-sm md:text-base placeholder:text-black/40"
+                className="bg-transparent border-none outline-none w-full text-sm md:text-base placeholder:text-black/40 dark:placeholder:text-white"
               />
             </div>
-            <button className="bg-black text-white px-6 md:px-8 py-3 rounded-full font-medium text-sm md:text-base transition hover:bg-black/80 active:scale-95">
+            <button className="bg-black text-white dark:bg-white dark:text-black px-6 md:px-8 py-3 rounded-full font-medium text-sm md:text-base transition hover:bg-black/80 active:scale-95 dark:hover-bg-white">
               Apply
             </button>
           </div>
-          <button className="w-full bg-black text-white mt-4 md:mt-6 py-4 rounded-full font-medium flex items-center justify-center gap-3 transition hover:bg-black/80 active:scale-95 group">
+          <button className="w-full bg-black text-white dark:bg-white dark:text-black mt-4 md:mt-6 py-4 rounded-full font-medium flex items-center justify-center gap-3 transition hover:bg-black/80 dark:hover-bg-white active:scale-95 group">
             Go to Checkout
             <ArrowRight
               size={20}
