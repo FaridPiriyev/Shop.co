@@ -14,7 +14,6 @@ const QuickViewModal: React.FC<QuickViewProps> = ({
 }) => {
   if (!product) return null;
 
-  // Modalın kənarına kliklədikdə bağlanması üçün
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();
   };
@@ -25,7 +24,6 @@ const QuickViewModal: React.FC<QuickViewProps> = ({
       onClick={handleBackdropClick}
     >
       <div className="bg-white dark:bg-[#1a1a1a] w-full max-w-[900px] rounded-[20px] overflow-hidden relative flex flex-col md:flex-row animate-in zoom-in duration-300">
-        {/* Bağlama Düyməsi */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 p-1 bg-white/80 dark:bg-black/50 rounded-full hover:rotate-90 transition-transform dark:text-white"
@@ -33,7 +31,6 @@ const QuickViewModal: React.FC<QuickViewProps> = ({
           <X size={20} />
         </button>
 
-        {/* Sol tərəf: Şəkil bölməsi */}
         <div className="md:w-1/2 bg-[#F0EEED] dark:bg-[#2a2a2a] flex items-center justify-center p-6">
           <img
             src={product.thumbnail}
@@ -42,7 +39,6 @@ const QuickViewModal: React.FC<QuickViewProps> = ({
           />
         </div>
 
-        {/* Sağ tərəf: Detallar */}
         <div className="md:w-1/2 p-8 flex flex-col justify-center">
           <h2 className="text-2xl md:text-3xl font-black uppercase mb-2 dark:text-white font-['Integral_CF'] leading-tight">
             {product.title}

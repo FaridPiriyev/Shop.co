@@ -1,8 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
-import Loading from "./Loading";
-import ErrorComponent from "./Error";
 import {
   Check,
   SlidersHorizontal,
@@ -16,10 +14,10 @@ const CategoryPage = () => {
   const navigate = useNavigate();
   const [allProducts, setAllProducts] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  const [minPrice, setMinPrice] = useState(0);
+  const [minPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [sortBy, setSortBy] = useState("popular");
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
@@ -64,8 +62,8 @@ const CategoryPage = () => {
   const dressStyles = ["Casual", "Formal", "Party", "Gym"];
 
   const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    setIsLoading(true);
+    setFetchError(null);
     try {
       const slug =
         !categoryName || categoryName === "all" ? "mens-shirts" : categoryName;
@@ -76,9 +74,9 @@ const CategoryPage = () => {
       setAllProducts(data.products);
       setProducts(data.products);
     } catch (err: any) {
-      setError(err.message);
+      setFetchError(err.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, [categoryName]);
 
@@ -277,7 +275,15 @@ const CategoryPage = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-10">
-            {products.length > 0 ? (
+            {isLoading ? (
+              <div className="col-span-full text-center py-20 text-gray-400">
+                Loading...
+              </div>
+            ) : fetchError ? (
+              <div className="col-span-full text-center py-20 text-red-400">
+                {fetchError}
+              </div>
+            ) : products.length > 0 ? (
               products.map((product: any) => (
                 <ProductCard key={product.id} product={product} />
               ))
