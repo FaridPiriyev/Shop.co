@@ -49,7 +49,8 @@ const BrowseByStyle = () => {
         <h2 className="text-3xl md:text-[48px] font-black text-center mb-12 uppercase tracking-tight text-black dark:text-white font-['Integral_CF',sans-serif]">
           BROWSE BY DRESS STYLE
         </h2>
-
+        
+        
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
           {styles.map((style, index) => (
             <div

@@ -147,8 +147,8 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="relative bg-[#F0F0F0] dark:bg-black pt-40 pb-10 mt-20">
-      <div className="max-w-[1240px] mx-auto px-4">
+    <footer className="relative bg-[#F0F0F0] dark:bg-black pt-40 pb-10 mt-30 sm:mt-20">
+      <div className="max-w-[1240px] mx-auto px-4 ">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-32px)] max-w-[1240px] bg-black dark:bg-white rounded-[20px] py-9 px-6 md:px-16 flex flex-col md:flex-row justify-between items-center gap-8 shadow-xl">
           <h2 className="text-white dark:text-black text-3xl md:text-[40px] font-black leading-tight uppercase max-w-[550px]">
             Stay upto date about our latest offers
